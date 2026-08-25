@@ -156,6 +156,26 @@ chart ships direct labels and a table view as the required relief.
 
 ---
 
+## Authentication
+
+Email/password and **Sign in with Google**, both through Supabase Auth. Google
+is an OAuth redirect to `/auth/callback`, which exchanges the code for a session
+cookie and forwards the user to wherever they were headed (`?next=`, restricted
+to relative paths so it can't be used as an open redirect).
+
+Enabling Google on a fresh deployment is two dashboard steps:
+
+1. **Google Cloud** → APIs & Services → Credentials → OAuth 2.0 Client ID (Web).
+   Authorised redirect URI: `https://<project-ref>.supabase.co/auth/v1/callback`
+2. **Supabase** → Authentication → Providers → Google → paste the Client ID and
+   Secret. Then under URL Configuration set the Site URL and add
+   `https://<your-domain>/**` to Redirect URLs.
+
+`handle_new_user` reads `display_name`, then `full_name`, then `name` from the
+identity metadata, because the signup form and Google label that field
+differently — without the fallbacks every Google user would be named after the
+local part of their email address.
+
 ## Security model
 
 - **Row-level security on every table.** Users read only their own documents and
