@@ -171,6 +171,16 @@ Enabling Google on a fresh deployment is two dashboard steps:
    Secret. Then under URL Configuration set the Site URL and add
    `https://<your-domain>/**` to Redirect URLs.
 
+Both halves fail with the same unhelpful message at the button, so there is a
+doctor that checks each side independently:
+
+```bash
+node web/scripts/check-google-oauth.mjs <client-id>
+```
+
+It needs no secrets — a client ID and a redirect URI are both public values that
+already appear in the OAuth URL the browser gets sent to.
+
 `handle_new_user` reads `display_name`, then `full_name`, then `name` from the
 identity metadata, because the signup form and Google label that field
 differently — without the fallbacks every Google user would be named after the
