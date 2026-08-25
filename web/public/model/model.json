@@ -1,0 +1,57 @@
+{
+  "name": "nwp-core",
+  "step": 15999,
+  "val": {
+    "loss": 3.344002878665924,
+    "perplexity": 28.33231082568949,
+    "top1": 0.39586181640625,
+    "top3": 0.5484375,
+    "top5": 0.60748291015625,
+    "tokens_scored": 81920,
+    "type": "eval",
+    "step": 16000,
+    "final": true
+  },
+  "config": {
+    "vocab_size": 16384,
+    "n_layer": 8,
+    "n_head": 6,
+    "n_kv_head": 2,
+    "n_embd": 384,
+    "block_size": 256,
+    "ffn_mult": 2.75,
+    "dropout": 0.0,
+    "rope_theta": 10000.0,
+    "tie_embeddings": true,
+    "attn_impl": "sdpa"
+  },
+  "params_total": 19470720,
+  "params_non_embedding": 13179264,
+  "vocab_size": 16384,
+  "context_length": 256,
+  "exported_at": "2026-08-25T11:06:40",
+  "variants": {
+    "int8w": {
+      "path": "nwp-core-int8w.onnx",
+      "bytes": 26623198,
+      "seq": 96,
+      "max_abs_diff": 2.77336,
+      "mean_abs_diff": 0.1812595,
+      "argmax_agreement": 0.92188,
+      "top5_overlap": 0.91597,
+      "ppl_fp32": 61.84,
+      "ppl_variant": 63.012,
+      "ppl_delta_pct": 1.895
+    }
+  },
+  "shipped_variant": "int8w",
+  "measured": {
+    "split": "test",
+    "perplexity": 33.105,
+    "top1": 0.37795,
+    "top3": 0.52598,
+    "top5": 0.58531,
+    "top5_delta_pp": -0.272,
+    "tokens_scored": 49152
+  }
+}
