@@ -1,0 +1,27 @@
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# training artifacts: large binaries, regenerable from ml/src/nwp/data/prepare.py
+ml/artifacts/data/
+ml/artifacts/onnx/
+ml/artifacts/runs/*/*.pt
+ml/logs/
+
+# shipped model weights (26.6MB) — regenerate with stage_model.py
+web/public/model/*.onnx
+web/public/ort/*.wasm
+
+# node
+node_modules/
+.next/
+.vercel/
+out/
+
+# env
+.env*
+!.env.example
+
+# os
+.DS_Store
