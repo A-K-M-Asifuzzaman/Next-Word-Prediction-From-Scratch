@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/stage-ort.mjs && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "node scripts/stage-ort.mjs",
+    "test:e2e": "node scripts/e2e.mjs",
+    "test:admin": "node scripts/e2e-admin.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",

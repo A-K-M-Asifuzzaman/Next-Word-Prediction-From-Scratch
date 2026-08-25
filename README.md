@@ -235,6 +235,15 @@ cases, and 120 real corpus samples.
 There is no inference server. Serving the model costs a static file fetch, and
 prediction cost scales with users at exactly zero marginal compute.
 
+Pushes to `main` deploy automatically. Vercel's **Root Directory is `web`**,
+since the Next.js app is a subdirectory of this repo.
+
+The trained `.onnx` weights are committed — reproducing them takes about eight
+hours of training, which makes "regenerable" true in principle and useless in
+practice. The ONNX Runtime `.wasm` binaries are *not* committed; they are
+copied out of `node_modules` by `scripts/stage-ort.mjs`, which runs on both
+`postinstall` and `build`.
+
 ### Environment
 
 ```

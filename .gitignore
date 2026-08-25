@@ -9,9 +9,14 @@ ml/artifacts/onnx/
 ml/artifacts/runs/*/*.pt
 ml/logs/
 
-# shipped model weights (26.6MB) — regenerate with stage_model.py
-web/public/model/*.onnx
+# ONNX Runtime binaries are copied out of node_modules by scripts/stage-ort.mjs
+# on install and on build, so they never need to be tracked.
 web/public/ort/*.wasm
+web/public/ort/*.mjs
+
+# The trained weights (26.6MB int8) ARE tracked: reproducing them takes ~8h of
+# training, which makes "regenerable" true in principle and useless in practice.
+# Everything else under ml/artifacts/ stays out.
 
 # node
 node_modules/
