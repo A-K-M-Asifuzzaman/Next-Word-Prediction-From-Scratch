@@ -1,0 +1,52 @@
+# NWP-Core base run.
+#
+# Shape chosen by measurement, not vibes. scripts/bench_opt.py showed MPS
+# throughput on this M3 Pro scales with model width, so a narrower/deeper model
+# buys far more training tokens per wall-clock hour:
+#
+#   L8 E512 (23.6M non-emb)   7.1k tok/s   ->  6.4 tokens/param   badly undertrained
+#   L6 E512 (17.7M non-emb)   7.9k tok/s   ->  9.7 tokens/param
+#   L8 E384 (13.2M non-emb)   9.5k tok/s   -> 26.0 tokens/param   <- chosen
+#   L6 E384 ( 9.9M non-emb)  11.3k tok/s   -> 34.7 tokens/param
+#
+# Chinchilla puts the compute-optimal ratio near 20 tokens/param. L8 E384 sits
+# just past it, which is the right side to err on when the model also has to be
+# downloaded and run inside a browser: slightly overtrained and small beats
+# undertrained and large at inference time.
+
+run_name: nwp-core-base
+seed: 1337
+device: auto
+preset: base
+
+model:
+  n_layer: 8
+  n_head: 6
+  n_kv_head: 2      # head_dim 64, KV cache is 1/3 the size of full MHA
+  n_embd: 384
+  block_size: 256   # ~190 words of context; ample for next-word prediction
+  dropout: 0.0      # <1.3 epochs over 270M tokens, so no overfitting to fight
+  ffn_mult: 2.75
+
+# 32 x 2 x 256 = 16,384 tokens per optimizer step
+batch_size: 32
+grad_accum: 2
+# Measured 7.5k tok/s end-to-end (below the 9.5k microbenchmark once eval and
+# memmap paging are counted), so 16k steps completes the cosine schedule inside
+# the budget. A truncated cosine leaves the model at a high LR and measurably
+# worse, so max_steps is set to finish rather than to be cut off by max_hours.
+max_steps: 16000            # 262M tokens, 0.97 epochs, ~9.7h wall clock
+max_hours: 11.5             # safety stop only; checkpoints are resumable
+
+lr: 8.0e-4
+min_lr: 8.0e-5
+warmup_steps: 500
+weight_decay: 0.1
+betas: [0.9, 0.95]
+grad_clip: 1.0
+amp: true
+
+log_every: 20
+eval_every: 500
+eval_batch_size: 8
+eval_batches: 40            # ~82k held-out tokens per eval
