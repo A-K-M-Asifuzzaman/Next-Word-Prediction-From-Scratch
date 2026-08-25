@@ -1,0 +1,253 @@
+@import "tailwindcss";
+
+/* ===========================================================================
+   NWP-Core :: "Instrument" design system
+
+   The visual premise: a language model does not have an opinion, it has a
+   distribution. So the interface is built like a measurement instrument --
+   hairline grids, corner ticks, tabular readouts, no gradients, no shadows,
+   no glass. Chrome is cold monospace; the thing you actually write is warm
+   serif. The contrast between those two voices is the whole design.
+
+   The categorical series palette below was validated with the dataviz
+   validator against both surfaces (all gates pass; light mode carries a
+   sub-3:1 contrast WARN on slots 1/2/4, so every chart ships direct labels
+   and a table view as the required relief).
+   =========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* -- planes ------------------------------------------------------------ */
+  --plane:        #08090b;   /* page */
+  --surface-1:    #111316;   /* panels, chart surface */
+  --surface-2:    #171a1f;   /* raised: inputs, popovers */
+  --surface-3:    #1d2127;   /* hover */
+
+  /* -- ink --------------------------------------------------------------- */
+  --ink-1:        #eceee9;
+  --ink-2:        #9aa1a8;
+  --ink-muted:    #666d75;
+
+  /* -- structure --------------------------------------------------------- */
+  --hairline:     rgba(255, 255, 255, 0.085);
+  --hairline-2:   rgba(255, 255, 255, 0.16);
+  --grid:         rgba(255, 255, 255, 0.035);
+  --axis:         #2b3037;
+
+  /* -- signal (chrome only; never a data series) ------------------------- */
+  --signal:       #2ee6a8;
+  --signal-dim:   #199e70;
+  --signal-wash:  rgba(46, 230, 168, 0.10);
+
+  /* -- categorical series ------------------------------------------------ */
+  --series-1: #199e70;   /* aqua   */
+  --series-2: #c98500;   /* amber  */
+  --series-3: #3987e5;   /* blue   */
+  --series-4: #d55181;   /* magenta*/
+  --series-5: #9085e9;   /* violet */
+  --series-6: #e66767;   /* red    */
+
+  /* -- sequential ramp (blue, light -> dark) ----------------------------- */
+  --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #6da7ec;
+  --seq-4: #3987e5; --seq-5: #256abf; --seq-6: #184f95;
+
+  /* -- status (reserved; always paired with icon + label) ---------------- */
+  --good:     #0ca30c;
+  --warning:  #fab219;
+  --serious:  #ec835a;
+  --critical: #d03b3b;
+
+  --radius: 2px;
+}
+
+:root[data-theme="paper"] {
+  color-scheme: light;
+
+  --plane:        #f2f1ec;
+  --surface-1:    #fbfaf7;
+  --surface-2:    #ffffff;
+  --surface-3:    #f0efe9;
+
+  --ink-1:        #0b0b0b;
+  --ink-2:        #52514e;
+  --ink-muted:    #898781;
+
+  --hairline:     rgba(11, 11, 11, 0.12);
+  --hairline-2:   rgba(11, 11, 11, 0.24);
+  --grid:         rgba(11, 11, 11, 0.045);
+  --axis:         #c3c2b7;
+
+  --signal:       #06845c;
+  --signal-dim:   #1baf7a;
+  --signal-wash:  rgba(6, 132, 92, 0.10);
+
+  --series-1: #1baf7a;
+  --series-2: #eda100;
+  --series-3: #2a78d6;
+  --series-4: #e87ba4;
+  --series-5: #4a3aa7;
+  --series-6: #e34948;
+
+  --good:     #006300;
+  --warning:  #b07800;
+  --serious:  #c15a2e;
+  --critical: #c02f2f;
+}
+
+@theme inline {
+  --color-plane:     var(--plane);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink-1:     var(--ink-1);
+  --color-ink-2:     var(--ink-2);
+  --color-ink-muted: var(--ink-muted);
+  --color-hairline:  var(--hairline);
+  --color-hairline-2:var(--hairline-2);
+  --color-axis:      var(--axis);
+  --color-signal:    var(--signal);
+  --color-signal-dim:var(--signal-dim);
+  --color-good:      var(--good);
+  --color-warning:   var(--warning);
+  --color-serious:   var(--serious);
+  --color-critical:  var(--critical);
+  --color-s1: var(--series-1);
+  --color-s2: var(--series-2);
+  --color-s3: var(--series-3);
+  --color-s4: var(--series-4);
+  --color-s5: var(--series-5);
+  --color-s6: var(--series-6);
+
+  --font-mono:   var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-sans:   var(--font-inter-tight), system-ui, -apple-system, sans-serif;
+  --font-serif:  var(--font-newsreader), Georgia, "Times New Roman", serif;
+
+  --radius-instrument: 2px;
+}
+
+/* ===========================================================================
+   base
+   =========================================================================== */
+
+* { border-color: var(--hairline); }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--plane);
+  color: var(--ink-1);
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "zero" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--signal); color: var(--plane); }
+
+:focus-visible {
+  outline: 1px solid var(--signal);
+  outline-offset: 2px;
+}
+
+/* Scrollbars, restyled so panels don't get a chunk of OS chrome in them. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--hairline-2);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background-clip: content-box; background-color: var(--ink-muted); }
+
+/* ===========================================================================
+   instrument primitives
+   =========================================================================== */
+
+/* The technical grid that sits behind everything. Two layers at different
+   pitches so it reads as graph paper rather than a checkerboard. */
+.grid-plane {
+  background-image:
+    linear-gradient(to right,  var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px),
+    linear-gradient(to right,  var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  background-position: -1px -1px;
+}
+
+/* Corner ticks: the bezel marks that make a box read as an instrument panel
+   rather than a card. Drawn with gradients so there is no extra markup. */
+.ticked {
+  position: relative;
+}
+.ticked::before,
+.ticked::after {
+  content: "";
+  position: absolute;
+  width: 7px; height: 7px;
+  pointer-events: none;
+  opacity: 0.55;
+}
+.ticked::before {
+  top: -1px; left: -1px;
+  border-top: 1px solid var(--signal);
+  border-left: 1px solid var(--signal);
+}
+.ticked::after {
+  bottom: -1px; right: -1px;
+  border-bottom: 1px solid var(--signal);
+  border-right: 1px solid var(--signal);
+}
+
+.label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.rule { border-top: 1px solid var(--hairline); }
+
+/* Blinking cursor for terminal-ish affordances. */
+@keyframes blink { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+.caret { animation: blink 1.06s steps(1) infinite; }
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(0.82); }
+}
+.live-dot { animation: pulse-dot 1.8s ease-in-out infinite; }
+
+/* Ghost completion rendered behind the textarea. */
+.ghost { color: var(--ink-muted); }
+
+@keyframes sweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+.sweeping::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, var(--signal-wash), transparent);
+  animation: sweep 1.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret, .live-dot, .sweeping::after { animation: none; }
+  .caret { opacity: 1; }
+}
+
+/* The editor's writing voice: warm serif against all that cold mono. */
+.prose-surface {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 1.75;
+  letter-spacing: -0.003em;
+}
+
+/* Chart text never wears a series color. */
+.chart-text { fill: var(--ink-2); font-size: 10px; letter-spacing: 0.04em; }
+.chart-text-muted { fill: var(--ink-muted); font-size: 10px; }
